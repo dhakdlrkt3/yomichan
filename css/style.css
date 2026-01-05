@@ -62,7 +62,7 @@
 	cursor: pointer;
 	min-width: 24px;
 	height: 20px;
-	border-radius: 3px;
+	border-radius: 5px;
 	border: 1px solid #bbb;
 	background-color: transparent;
 	color: #bbb;
@@ -108,7 +108,7 @@
 
 .yomichan-popup>.yomichan-button-area>button {
 	cursor: pointer;
-	border-radius: 3px;
+	border-radius: 5px;
 	border: 1px solid #666;
 	background-color: rgba(255, 255, 255, 0.05);
 	color: #ddd;
@@ -165,7 +165,7 @@
 	font-size: 12px;
 	padding: 2px 8px;
 	border: 1px solid #2196F3;
-	border-radius: 3px;
+	border-radius: 5px;
 	background-color: rgba(33, 150, 243, 0.1);
 	transition: background-color 0.2s;
 	margin-right: 6px;
@@ -182,7 +182,7 @@
 	font-size: 12px;
 	padding: 2px 8px;
 	border: 1px solid #4CAF50;
-	border-radius: 3px;
+	border-radius: 5px;
 	background-color: rgba(76, 175, 80, 0.1);
 	transition: background-color 0.2s;
 }
@@ -246,7 +246,7 @@
 	background-color: #DEF0CE;
 	border-color: #808080;
 	width: 120px;
-	border-radius: 5px;
+	border-radius: 20px;
 	padding: 5px;
 	box-sizing: content-box;
 }
