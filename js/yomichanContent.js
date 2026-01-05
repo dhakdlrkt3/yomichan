@@ -262,6 +262,8 @@ var ymcContent = {
 			word.style.color = kanjiColor;
 			word.style.fontSize = kanjiFontSize + "px";
 		});
+		// 번역 문장 영역의 폰트 크기를 '한자' 크기와 동일하게 설정
+		translationResult.style.fontSize = kanjiFontSize + "px";
 		// ふりがな（rt）のスタイル設定
 		var furiganaColor = ymcContent.setting.furiganaColor || ymcContent.setting.wordColor;
 		var furiganaFontSize = ymcContent.setting.furiganaFontSize || (kanjiFontSize - ymcContent.noteFontSizeDiff);
@@ -299,24 +301,14 @@ var ymcContent = {
 				- horizontalPadding);
 		right = Math.max(right, yomichanPopupToggleButton.clientWidth);
 		popup.style.right = right + "px";
-		if ((selection.top - popup.clientHeight - ymcContent.popupSpacing) < 0) {
-			let y = selection.bottom + document.documentElement.scrollTop
-					+ ymcContent.popupSpacing;
-			popup.classList.add('yomichan-popup-bottom');
-			popup.style.top = y + "px";
-		} else {
-			let y = document.documentElement.clientHeight
-					- (selection.top + document.documentElement.scrollTop)
-					+ ymcContent.popupSpacing;
-			if ("relative" == window.getComputedStyle(document.body, null).position) {
-				y += (document.documentElement.scrollHeight - document.documentElement.clientHeight);
-			}
-			popup.classList.add('yomichan-popup-top');
-			popup.style.bottom = y + "px";
-		}
 
-		// 展開する場合のサイズを記憶
-		var _clientH = popup.clientHeight - verticalPadding;
+		// 항상 선택 영역 아래쪽에 표시되도록 설정 (기존 문장을 가리지 않도록)
+		let y = selection.bottom + document.documentElement.scrollTop
+				+ ymcContent.popupSpacing;
+		popup.classList.add('yomichan-popup-bottom');
+		popup.style.top = y + "px";
+
+		// 展開する場合のサイズを記憶（폭만 고정, 높이는 auto로 유지하여 아래로 늘어나도록 함）
 		var _clientW = popup.clientWidth - horizontalPadding;
 
 		// 拡大縮小ボタンの押下イベント
@@ -341,7 +333,8 @@ var ymcContent = {
 					popup.classList.add('yomichan-popup-transition');
 				}
 			}
-			popup.style.height = expand ? _clientH + 'px' : '0px';
+			// 높이는 auto로 두고, 축소 시에만 0으로 만들어 기존 문장을 가리지 않도록 함
+			popup.style.height = expand ? 'auto' : '0px';
 			popup.style.width = expand ? _clientW + 'px' : '0px';
 
 			let settingButton = document.querySelector('.yomichan-setting-button');
@@ -596,6 +589,11 @@ var ymcContent = {
 						document.querySelectorAll('.yomichan-content>ruby').forEach(function(word) {
 							word.style.fontSize = value + "px";
 						});
+						// 번역 문장 영역 폰트도 한자 크기에 맞춰 변경
+						var tr = document.querySelector('.yomichan-translation-result');
+						if (tr) {
+							tr.style.fontSize = value + "px";
+						}
 						resetPopupStyle();
 						ymcContent.setting.kanjiFontSize = value;
 						break;

@@ -112,9 +112,10 @@
 	border: 1px solid #666;
 	background-color: rgba(255, 255, 255, 0.05);
 	color: #ddd;
-	font-size: 11px;
-	line-height: 18px;
-	padding: 2px 6px;
+	font-size: 14px;
+	line-height: 22px;
+	padding: 6px 12px;
+	min-height: 28px;
 	box-sizing: border-box;
 }
 
@@ -124,7 +125,6 @@
 
 .yomichan-popup>.yomichan-translation-result {
 	margin-top: 4px;
-	font-size: 11px;
 	line-height: 1.4;
 	color: #f0f0f0;
 	word-break: break-word;
