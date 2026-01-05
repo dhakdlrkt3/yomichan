@@ -60,18 +60,9 @@
 
 .yomichan-popup-header>.yomichan-close-button {
 	cursor: pointer;
-	width: 20px;
-	min-width: 20px;
-	max-width: 20px;
-	height: 20px;
-	background-color: rgba(0, 0, 0, 0.1);
-	border: 0;
-	outline: none;
-	box-sizing: border-box;
-	border-radius: 3px;
 	padding: 0;
-	font-size: 18px;
-	line-height: 20px;
+	line-height: 0px;
+	font-size: 30px;
 	text-align: center;
 	color: #666;
 	font-weight: bold;
@@ -79,8 +70,6 @@
 	align-items: center;
 	justify-content: center;
 	transition: background-color 0.2s;
-	background-size: 100% 100%;
-	flex-shrink: 0;
 }
 
 .yomichan-popup-header>.yomichan-close-button:hover {
