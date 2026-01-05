@@ -1,3 +1,5 @@
+.env
+
 /.project
 /.settings/*
 /.tern-project

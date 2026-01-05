@@ -96,6 +96,41 @@
 	color: #333;
 }
 
+/* 버튼 영역 */
+.yomichan-popup>.yomichan-button-area {
+	display: flex;
+	gap: 6px;
+	margin-top: 6px;
+	justify-content: flex-start;
+	align-items: center;
+	flex-wrap: wrap;
+}
+
+.yomichan-popup>.yomichan-button-area>button {
+	cursor: pointer;
+	border-radius: 3px;
+	border: 1px solid #666;
+	background-color: rgba(255, 255, 255, 0.05);
+	color: #ddd;
+	font-size: 11px;
+	line-height: 18px;
+	padding: 2px 6px;
+	box-sizing: border-box;
+}
+
+.yomichan-popup>.yomichan-button-area>button:hover {
+	background-color: rgba(255, 255, 255, 0.15);
+}
+
+.yomichan-popup>.yomichan-translation-result {
+	margin-top: 4px;
+	font-size: 11px;
+	line-height: 1.4;
+	color: #f0f0f0;
+	word-break: break-word;
+	white-space: pre-wrap;
+}
+
 .yomichan-popup>.yomichan-popup-toggle-button {
 	position: absolute;
 	cursor: pointer;

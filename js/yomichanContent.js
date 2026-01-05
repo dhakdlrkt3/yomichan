@@ -173,6 +173,9 @@ var ymcContent = {
 		popup.style.backgroundColor = ymcContent.setting.backgroundColor;
 		popup.classList.add('yomichan-popup');
 
+		// 원본 선택 텍스트 (번역/토큰화에 사용)
+		var originalText = selection && selection.selectionText ? selection.selectionText : "";
+
 		// ヘッダーエリア（ボタン用）
 		var popupHeader = document.createElement('div');
 		popupHeader.classList.add('yomichan-popup-header');
@@ -215,6 +218,28 @@ var ymcContent = {
 		yomichanContent.classList.add('yomichan-content');
 		yomichanContent.innerHTML = html;
 		popup.appendChild(yomichanContent);
+
+		// 버튼 영역 (팝업 하단)
+		var buttonArea = document.createElement('div');
+		buttonArea.classList.add('yomichan-button-area');
+		popup.appendChild(buttonArea);
+
+		// 문장 번역 버튼
+		var translateButton = document.createElement('button');
+		translateButton.classList.add('yomichan-translate-button');
+		translateButton.textContent = '문장 번역';
+		buttonArea.appendChild(translateButton);
+
+		// 단어 분석(토큰화) 버튼 - 일단 UI만
+		var tokenizeButton = document.createElement('button');
+		tokenizeButton.classList.add('yomichan-tokenize-button');
+		tokenizeButton.textContent = '단어 분석';
+		buttonArea.appendChild(tokenizeButton);
+
+		// 번역 결과 표시 영역 (버튼 영역 아래)
+		var translationResult = document.createElement('div');
+		translationResult.classList.add('yomichan-translation-result');
+		popup.appendChild(translationResult);
 
 		// 縮小ボタン
 		var yomichanPopupToggleButton = document.createElement('button');
@@ -376,6 +401,45 @@ var ymcContent = {
 		// ポップアップ内のマウスダウンイベントを停止（外側クリック検出を防ぐため）
 		popup.addEventListener('mousedown', function(event) {
 			event.stopPropagation();
+		}, false);
+
+		// 문장 번역 버튼 클릭 이벤트
+		translateButton.addEventListener('click', function(event) {
+			event.stopPropagation();
+			if (!originalText || !originalText.trim()) {
+				translationResult.textContent = '번역할 문장이 없습니다.';
+				return;
+			}
+			translationResult.textContent = '번역 중...';
+			chrome.runtime.sendMessage({
+				type : "translateToKorean",
+				data : originalText
+			}, function(response) {
+				if (!response) {
+					translationResult.textContent = '번역 실패: 응답이 없습니다.';
+					return;
+				}
+				if (response.error) {
+					if (response.message === "API_KEY_NOT_SET") {
+						translationResult.textContent = '번역 API 키가 설정되어 있지 않습니다.';
+					} else {
+						translationResult.textContent = '번역 중 오류가 발생했습니다.';
+					}
+					return;
+				}
+				if (response.translatedText) {
+					translationResult.innerHTML = response.translatedText;
+				} else {
+					translationResult.textContent = '번역 결과가 비어 있습니다.';
+				}
+			});
+		}, false);
+
+		// 단어 분석 버튼 클릭 이벤트 (UI만, 기능은 추후 구현)
+		tokenizeButton.addEventListener('click', function(event) {
+			event.stopPropagation();
+			// TODO: 각 단어를 토큰화하여 일본/한국 한자 훈/음, 예시 문장 등을 표시하는 기능 구현
+			alert('단어 분석 기능은 준비 중입니다.');
 		}, false);
 
 		// 設定ポップアップを表示
