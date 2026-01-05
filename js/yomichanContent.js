@@ -131,19 +131,37 @@ var ymcContent = {
 		}
 		ymcContent.clickSettingPopup = false;
 		
-		// ポップアップ外側をクリックした場合、ポップアップを閉じる
+		// ポップアップ内側をクリックした場合は閉じない
 		var popup = document.querySelector(".yomichan-popup");
 		if (popup) {
 			var clickedPopup = event.target.closest(".yomichan-popup");
-			if (!clickedPopup) {
-				ymcContent.closePopup();
+			if (clickedPopup) {
+				// ポップアップ内側のクリックは無視（閉じるボタン以外）
+				return;
 			}
+		}
+		// ポップアップ外側をクリックした場合、ポップアップを閉じる
+		if (popup) {
+			ymcContent.closePopup();
 		}
 	},
 	// 選択内容が変わるイベント
 	onSelectionchange : function(event) {
 		if (ymcContent.clickSettingPopup) {
 			return;
+		}
+		// ポップアップ内の選択変更の場合は閉じない
+		var popup = document.querySelector(".yomichan-popup");
+		if (popup) {
+			var selection = window.getSelection();
+			if (selection.rangeCount > 0) {
+				var range = selection.getRangeAt(0);
+				var clickedElem = range.commonAncestorContainer;
+				// ポップアップ内の要素か確認
+				if (popup.contains(clickedElem.nodeType === Node.TEXT_NODE ? clickedElem.parentNode : clickedElem)) {
+					return;
+				}
+			}
 		}
 		ymcContent.closePopup();
 	},
@@ -313,6 +331,11 @@ var ymcContent = {
 
 		// ポップアップ内のクリックイベントを停止（外側クリック検出を防ぐため）
 		popup.addEventListener('click', function(event) {
+			event.stopPropagation();
+		}, false);
+		
+		// ポップアップ内のマウスダウンイベントを停止（外側クリック検出を防ぐため）
+		popup.addEventListener('mousedown', function(event) {
 			event.stopPropagation();
 		}, false);
 
