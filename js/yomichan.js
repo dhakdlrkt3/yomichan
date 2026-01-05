@@ -137,7 +137,7 @@ var ymcMain = {
 			sendResponse();
 		}
 	},
-	// 単語をトークン化（助詞を除く）
+	// 単語をトークン化（助詞を除く）＋ 의미있는 단어들을 자연스럽게 합치기 (조동사/어미 포함)
 	tokenizeWords : function(text, sendResponse) {
 		if (text == null || text == "") {
 			sendResponse([]);
@@ -151,6 +151,32 @@ var ymcMain = {
 			}
 			// kuromojiで形態素解析を行う
 			var tokens = tokenizer.tokenize(line);
+			
+			// 의미있는 단어를 하나의 단위로 합치기 위한 버퍼
+			var currentWord = "";
+			var currentReading = "";
+			var currentPos = "";
+			
+			function flushCurrent() {
+				if (!currentWord) {
+					return;
+				}
+				// 이미 동일 단어/읽기가 존재하는지 확인 (중복 제거)
+				var alreadyExists = meaningfulWords.some(function(w) {
+					return w.word === currentWord && w.reading === (currentReading || "");
+				});
+				if (!alreadyExists) {
+					meaningfulWords.push({
+						word : currentWord,
+						reading : currentReading || "",
+						pos : currentPos || ""
+					});
+				}
+				currentWord = "";
+				currentReading = "";
+				currentPos = "";
+			}
+
 			for (let i = 0; i < tokens.length; i++) {
 				let token = tokens[i];
 				let surfaceForm = token.surface_form;
@@ -162,11 +188,14 @@ var ymcMain = {
 				
 				// 助詞を除外（posが"助詞"で始まるものを除外）
 				if (pos && pos.startsWith("助詞")) {
+					// 명사 덩어리 플러시 후 넘어감
+					flushCurrent();
 					continue;
 				}
 				
 				// 記号も除外
 				if (pos && pos.startsWith("記号")) {
+					flushCurrent();
 					continue;
 				}
 				
@@ -174,20 +203,44 @@ var ymcMain = {
 				if (/^\s+$/.test(surfaceForm)) {
 					continue;
 				}
-				
-				// 既に追加された 단어인지 확인 (중복 제거)
-				var alreadyExists = meaningfulWords.some(function(w) {
-					return w.word === surfaceForm && w.reading === (token.reading || "");
-				});
-				
-				if (!alreadyExists) {
-					meaningfulWords.push({
-						word: surfaceForm,
-						reading: token.reading || "",
-						pos: pos || ""
-					});
+
+				// 조동사나 어미는 앞 단어에 합치기 (られる, れる, た, だ, い, な 등)
+				var isAuxiliary = false;
+				if (pos) {
+					// 조동사 (助動詞)
+					if (pos.startsWith("助動詞")) {
+						isAuxiliary = true;
+					}
+					// 동사/형용사 어미도 앞 단어에 합치기
+					else if (pos.startsWith("動詞") || pos.startsWith("形容詞")) {
+						// 이미 단어가 있으면 합치기 (동사/형용사 어미로 판단)
+						if (currentWord) {
+							isAuxiliary = true;
+						}
+					}
 				}
+
+				if (isAuxiliary && currentWord) {
+					// 앞 단어에 합치기
+					currentWord += surfaceForm;
+					if (token.reading) {
+						currentReading += token.reading;
+					}
+					continue;
+				}
+
+				// 새로운 단어 시작 (명사, 동사, 형용사 등)
+				// 기존 단어가 있으면 먼저 플러시
+				flushCurrent();
+				
+				// 새 단어 시작
+				currentWord = surfaceForm;
+				currentReading = token.reading || "";
+				currentPos = pos || "";
 			}
+
+			// 라인 끝에서 남아 있는 단어 덩어리 처리
+			flushCurrent();
 		});
 		
 		sendResponse(meaningfulWords);
