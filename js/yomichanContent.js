@@ -108,6 +108,15 @@ var ymcContent = {
 			}
 		}
 		ymcContent.clickSettingPopup = false;
+		
+		// ポップアップ外側をクリックした場合、ポップアップを閉じる
+		var popup = document.querySelector(".yomichan-popup");
+		if (popup) {
+			var clickedPopup = event.target.closest(".yomichan-popup");
+			if (!clickedPopup) {
+				ymcContent.closePopup();
+			}
+		}
 	},
 	// 選択内容が変わるイベント
 	onSelectionchange : function(event) {
@@ -122,15 +131,22 @@ var ymcContent = {
 		popup.style.backgroundColor = ymcContent.setting.backgroundColor;
 		popup.classList.add('yomichan-popup');
 
-		// 縮小ボタン
-		var yomichanPopupToggleButton = document.createElement('button');
-		yomichanPopupToggleButton.classList.add('yomichan-popup-toggle-button');
-		popup.appendChild(yomichanPopupToggleButton);
+		// ヘッダーエリア（ボタン用）
+		var popupHeader = document.createElement('div');
+		popupHeader.classList.add('yomichan-popup-header');
+		popup.appendChild(popupHeader);
 
 		// 設定ボタン
 		var yomichanSettingButton = document.createElement('button');
 		yomichanSettingButton.classList.add('yomichan-setting-button');
-		popup.appendChild(yomichanSettingButton);
+		popupHeader.appendChild(yomichanSettingButton);
+
+		// 閉じるボタン
+		var yomichanCloseButton = document.createElement('button');
+		yomichanCloseButton.classList.add('yomichan-close-button');
+		yomichanCloseButton.textContent = '×';
+		yomichanCloseButton.setAttribute('aria-label', '閉じる');
+		popupHeader.appendChild(yomichanCloseButton);
 
 		// コンテンツを表示するエリア
 		var yomichanContent = document.createElement('div');
@@ -139,6 +155,11 @@ var ymcContent = {
 		yomichanContent.classList.add('yomichan-content');
 		yomichanContent.innerHTML = html;
 		popup.appendChild(yomichanContent);
+
+		// 縮小ボタン
+		var yomichanPopupToggleButton = document.createElement('button');
+		yomichanPopupToggleButton.classList.add('yomichan-popup-toggle-button');
+		popup.appendChild(yomichanPopupToggleButton);
 
 		// bodyに追加
 		document.body.appendChild(popup);
@@ -240,7 +261,8 @@ var ymcContent = {
 		}
 
 		// 設定ボタンの押下イベント
-		yomichanSettingButton.addEventListener('click', function() {
+		yomichanSettingButton.addEventListener('click', function(event) {
+			event.stopPropagation();
 			if (ymcContent.settingExpand == false) {
 				showSettingPopup();
 				ymcContent.settingExpand = true;
@@ -248,6 +270,17 @@ var ymcContent = {
 				closeSettingPopup();
 				ymcContent.settingExpand = false
 			}
+		}, false);
+
+		// 閉じるボタンの押下イベント
+		yomichanCloseButton.addEventListener('click', function(event) {
+			event.stopPropagation();
+			ymcContent.closePopup();
+		}, false);
+
+		// ポップアップ内のクリックイベントを停止（外側クリック検出を防ぐため）
+		popup.addEventListener('click', function(event) {
+			event.stopPropagation();
 		}, false);
 
 		// 設定ポップアップを表示

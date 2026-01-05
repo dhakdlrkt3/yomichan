@@ -5,13 +5,24 @@
 	border-radius: 5px;
 	padding: 5px;
 	box-sizing: content-box;
+	display: flex;
+	flex-direction: column;
+}
+
+.yomichan-popup>.yomichan-popup-header {
+	display: flex;
+	justify-content: flex-end;
+	align-items: center;
+	gap: 5px;
+	margin-bottom: 5px;
+	min-height: 20px;
 }
 
 .yomichan-popup>.yomichan-content {
 	padding: 0px;
 	text-align: left;
 	word-break: break-all;
-	height: 100%;
+	flex: 1;
 	width: 100%;
 	overflow: hidden;
 	box-sizing: content-box;
@@ -28,8 +39,7 @@
 	white-space: nowrap;
 }
 
-.yomichan-popup>.yomichan-setting-button {
-	position: absolute;
+.yomichan-popup-header>.yomichan-setting-button {
 	cursor: pointer;
 	width: 20px;
 	min-width: 20px;
@@ -45,16 +55,37 @@
 	box-sizing: border-box;
 	box-shadow: none;
 	padding: 5px;
+	flex-shrink: 0;
 }
 
-.yomichan-popup-top>.yomichan-setting-button {
-	right: -20px;
-	bottom: 25px;
+.yomichan-popup-header>.yomichan-close-button {
+	cursor: pointer;
+	width: 20px;
+	min-width: 20px;
+	max-width: 20px;
+	height: 20px;
+	background-color: rgba(0, 0, 0, 0.1);
+	border: 0;
+	outline: none;
+	box-sizing: border-box;
+	border-radius: 3px;
+	padding: 0;
+	font-size: 18px;
+	line-height: 20px;
+	text-align: center;
+	color: #666;
+	font-weight: bold;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	transition: background-color 0.2s;
+	background-size: 100% 100%;
+	flex-shrink: 0;
 }
 
-.yomichan-popup-bottom>.yomichan-setting-button {
-	right: -20px;
-	top: 25px;
+.yomichan-popup-header>.yomichan-close-button:hover {
+	background-color: rgba(0, 0, 0, 0.2);
+	color: #333;
 }
 
 .yomichan-popup>.yomichan-popup-toggle-button {
