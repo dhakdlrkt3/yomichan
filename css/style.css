@@ -2,8 +2,8 @@
 	position: absolute;
 	z-index: 999999999;
 	border-color: #808080;
-	border-radius: 5px;
-	padding: 5px;
+	border-radius: 20px;
+	padding: 20px;
 	box-sizing: content-box;
 	display: flex;
 	flex-direction: column;
@@ -14,7 +14,7 @@
 	justify-content: flex-end;
 	align-items: center;
 	gap: 5px;
-	margin-bottom: 5px;
+	margin-bottom: 15px;
 	min-height: 20px;
 }
 
@@ -100,7 +100,7 @@
 .yomichan-popup>.yomichan-button-area {
 	display: flex;
 	gap: 6px;
-	margin-top: 6px;
+	margin-top: 10px;
 	justify-content: flex-start;
 	align-items: center;
 	flex-wrap: wrap;
@@ -124,7 +124,7 @@
 }
 
 .yomichan-popup>.yomichan-translation-result {
-	margin-top: 4px;
+	margin-top: 10px;
 	line-height: 1.4;
 	color: #f0f0f0;
 	word-break: break-word;
@@ -133,7 +133,7 @@
 
 /* 단어 분석 결과 영역 */
 .yomichan-popup>.yomichan-word-analysis-result {
-	margin-top: 8px;
+	margin-top: 10px;
 	padding-top: 8px;
 	border-top: 1px solid rgba(255, 255, 255, 0.2);
 }
