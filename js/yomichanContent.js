@@ -428,11 +428,106 @@ var ymcContent = {
 			});
 		}, false);
 
-		// 단어 분석 버튼 클릭 이벤트 (UI만, 기능은 추후 구현)
+		// 단어 분석 버튼 클릭 이벤트
 		tokenizeButton.addEventListener('click', function(event) {
 			event.stopPropagation();
-			// TODO: 각 단어를 토큰화하여 일본/한국 한자 훈/음, 예시 문장 등을 표시하는 기능 구현
-			alert('단어 분석 기능은 준비 중입니다.');
+			if (!originalText || !originalText.trim()) {
+				// 단어 분석 결과 영역이 없으면 생성
+				var wordAnalysisResult = document.querySelector('.yomichan-word-analysis-result');
+				if (!wordAnalysisResult) {
+					wordAnalysisResult = document.createElement('div');
+					wordAnalysisResult.classList.add('yomichan-word-analysis-result');
+					popup.appendChild(wordAnalysisResult);
+				}
+				wordAnalysisResult.textContent = '분석할 문장이 없습니다.';
+				return;
+			}
+			
+			// 단어 분석 결과 영역이 없으면 생성
+			var wordAnalysisResult = document.querySelector('.yomichan-word-analysis-result');
+			if (!wordAnalysisResult) {
+				wordAnalysisResult = document.createElement('div');
+				wordAnalysisResult.classList.add('yomichan-word-analysis-result');
+				popup.appendChild(wordAnalysisResult);
+			}
+			
+			wordAnalysisResult.textContent = '분석 중...';
+			
+			chrome.runtime.sendMessage({
+				type : "tokenizeWords",
+				data : originalText
+			}, function(response) {
+				if (!response) {
+					wordAnalysisResult.textContent = '분석 실패: 응답이 없습니다.';
+					return;
+				}
+				if (response.error) {
+					wordAnalysisResult.textContent = '분석 중 오류가 발생했습니다.';
+					return;
+				}
+				if (!response.words || response.words.length === 0) {
+					wordAnalysisResult.textContent = '분석할 단어가 없습니다.';
+					return;
+				}
+				
+				// 결과 HTML 생성
+				var html = '';
+				var kanjiFontSize = ymcContent.setting.kanjiFontSize || ymcContent.setting.wordFontSize || 14;
+				var kanjiColor = ymcContent.setting.kanjiColor || ymcContent.setting.wordColor || "#FFFFFF";
+				
+				response.words.forEach(function(wordObj) {
+					var word = wordObj.word;
+					var reading = wordObj.reading || "";
+					var translation = wordObj.translation || "";
+					
+					// 후리가나 HTML 생성
+					var furiganaHtml = "";
+					if (reading && reading.trim() !== "") {
+						var note = kana2Hira(reading);
+						var textHira = kana2Hira(word);
+						if (note !== textHira) {
+							var start = 0;
+							while (note && textHira && note[start] == textHira[start]) {
+								start += 1;
+							}
+							var prefix = word.substr(0, start);
+							var kanjiPart = word.substr(start);
+							var readingPart = note.substr(start);
+							
+							if (kanjiPart && readingPart) {
+								furiganaHtml = prefix + '<ruby><rb>' + kanjiPart + '</rb><rp>(</rp><rt>&nbsp;' + readingPart + '&nbsp;</rt><rp>)</rp></ruby>';
+							} else {
+								furiganaHtml = word;
+							}
+						} else {
+							furiganaHtml = word;
+						}
+					} else {
+						furiganaHtml = word;
+					}
+					
+					// 네이버 한자사전 URL 생성 (UTF-8 인코딩)
+					var naverHanjaUrl = "https://hanja.dict.naver.com/#/search?query=" + encodeURIComponent(word);
+					
+					// 각 단어 행 HTML
+					html += '<div class="yomichan-word-item">';
+					html += '<span class="yomichan-word-furigana" style="color: ' + kanjiColor + '; font-size: ' + kanjiFontSize + 'px;">' + furiganaHtml + '</span>';
+					html += '<span class="yomichan-word-translation">' + (translation || '') + '</span>';
+					html += '<a href="' + naverHanjaUrl + '" target="_blank" class="yomichan-word-hanja-link" title="네이버 한자사전에서 검색">한자</a>';
+					html += '</div>';
+				});
+				
+				wordAnalysisResult.innerHTML = html;
+				
+				// 후리가나 스타일 적용
+				var furiganaColor = ymcContent.setting.furiganaColor || ymcContent.setting.wordColor || "#FFFFFF";
+				var furiganaFontSize = ymcContent.setting.furiganaFontSize || Math.max(ymcContent.minFontSize, kanjiFontSize - ymcContent.noteFontSizeDiff);
+				wordAnalysisResult.querySelectorAll('ruby>rt').forEach(function(rt) {
+					rt.style.color = furiganaColor;
+					rt.style.fontSize = furiganaFontSize + "px";
+					rt.style.display = ymcContent.setting.showFurigana !== false ? '' : 'none';
+				});
+			});
 		}, false);
 
 		// 設定ポップアップを表示
@@ -709,3 +804,12 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
 chrome.runtime.sendMessage({
 	type : "checkEnabled"
 });
+
+// カタカナ⇒ひらがな (단어 분석에서 사용)
+function kana2Hira(str) {
+	if (!str) return "";
+	return str.replace(/[\u30a1-\u30f6]/g, function(match) {
+		var chr = match.charCodeAt(0) - 0x60;
+		return String.fromCharCode(chr);
+	});
+}

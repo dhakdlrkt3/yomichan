@@ -136,6 +136,61 @@ var ymcMain = {
 		} else {
 			sendResponse();
 		}
+	},
+	// 単語をトークン化（助詞を除く）
+	tokenizeWords : function(text, sendResponse) {
+		if (text == null || text == "") {
+			sendResponse([]);
+			return;
+		}
+		
+		var meaningfulWords = [];
+		text.split(/\r\n|\r|\n/).forEach(function(line) {
+			if (line == null || line.trim() == "") {
+				return;
+			}
+			// kuromojiで形態素解析を行う
+			var tokens = tokenizer.tokenize(line);
+			for (let i = 0; i < tokens.length; i++) {
+				let token = tokens[i];
+				let surfaceForm = token.surface_form;
+				let pos = token.pos; // 品詞情報
+				
+				if (surfaceForm == null || surfaceForm == "" || surfaceForm.trim() == "") {
+					continue;
+				}
+				
+				// 助詞を除外（posが"助詞"で始まるものを除外）
+				if (pos && pos.startsWith("助詞")) {
+					continue;
+				}
+				
+				// 記号も除外
+				if (pos && pos.startsWith("記号")) {
+					continue;
+				}
+				
+				// 空白文字のみの 토큰 제외
+				if (/^\s+$/.test(surfaceForm)) {
+					continue;
+				}
+				
+				// 既に追加された 단어인지 확인 (중복 제거)
+				var alreadyExists = meaningfulWords.some(function(w) {
+					return w.word === surfaceForm && w.reading === (token.reading || "");
+				});
+				
+				if (!alreadyExists) {
+					meaningfulWords.push({
+						word: surfaceForm,
+						reading: token.reading || "",
+						pos: pos || ""
+					});
+				}
+			}
+		});
+		
+		sendResponse(meaningfulWords);
 	}
 }
 

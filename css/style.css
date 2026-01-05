@@ -131,6 +131,53 @@
 	white-space: pre-wrap;
 }
 
+/* 단어 분석 결과 영역 */
+.yomichan-popup>.yomichan-word-analysis-result {
+	margin-top: 8px;
+	padding-top: 8px;
+	border-top: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.yomichan-popup>.yomichan-word-analysis-result>.yomichan-word-item {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	margin-bottom: 6px;
+	padding: 4px 0;
+	line-height: 1.6;
+}
+
+.yomichan-popup>.yomichan-word-analysis-result>.yomichan-word-item>.yomichan-word-furigana {
+	flex-shrink: 0;
+	min-width: 80px;
+}
+
+.yomichan-popup>.yomichan-word-analysis-result>.yomichan-word-item>.yomichan-word-translation {
+	flex: 1;
+	color: #f0f0f0;
+	word-break: break-word;
+}
+
+.yomichan-popup>.yomichan-word-analysis-result>.yomichan-word-item>.yomichan-word-hanja-link {
+	flex-shrink: 0;
+	color: #4CAF50;
+	text-decoration: none;
+	font-size: 12px;
+	padding: 2px 8px;
+	border: 1px solid #4CAF50;
+	border-radius: 3px;
+	background-color: rgba(76, 175, 80, 0.1);
+	transition: background-color 0.2s;
+}
+
+.yomichan-popup>.yomichan-word-analysis-result>.yomichan-word-item>.yomichan-word-hanja-link:hover {
+	background-color: rgba(76, 175, 80, 0.3);
+}
+
+.yomichan-popup>.yomichan-word-analysis-result ruby>rt {
+	white-space: nowrap;
+}
+
 .yomichan-popup>.yomichan-popup-toggle-button {
 	position: absolute;
 	cursor: pointer;

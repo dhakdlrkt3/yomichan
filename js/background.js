@@ -43,6 +43,42 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
 		// 非同期で応答することを示す
 		return true;
 		break;
+	case 'tokenizeWords':
+		// 単語をトークン化して各単語を翻訳する要求
+		if (!request.data) {
+			sendResponse({ words: [] });
+			break;
+		}
+		ymcMain.tokenizeWords(request.data, function(words) {
+			// 各単語を翻訳
+			var translationPromises = words.map(function(wordObj) {
+				return translator.translateToKorean(wordObj.word).then(function(translation) {
+					return {
+						word: wordObj.word,
+						reading: wordObj.reading,
+						pos: wordObj.pos,
+						translation: translation
+					};
+				}).catch(function(error) {
+					return {
+						word: wordObj.word,
+						reading: wordObj.reading,
+						pos: wordObj.pos,
+						translation: "(번역 실패)"
+					};
+				});
+			});
+			
+			Promise.all(translationPromises).then(function(results) {
+				sendResponse({ words: results });
+			}).catch(function(error) {
+				console.error("단어 분석 중 오류:", error);
+				sendResponse({ error: true, message: "단어 분석 실패" });
+			});
+		});
+		// 非同期で応答することを示す
+		return true;
+		break;
 	default:
 		console.log("認識できないタイプ.request=" + request);
 	}
