@@ -18,6 +18,7 @@ var ymcContent = {
 		kanjiFontSize: 14,
 		furiganaColor: "#FFFFFF",
 		furiganaFontSize: 10,
+		showFurigana: true,
 	},
 	// 有効にする
 	enable : function() {
@@ -59,6 +60,7 @@ var ymcContent = {
 				if (!setting.kanjiFontSize) setting.kanjiFontSize = 14;
 				if (!setting.furiganaColor) setting.furiganaColor = "#FFFFFF";
 				if (!setting.furiganaFontSize) setting.furiganaFontSize = 10;
+				if (setting.showFurigana === undefined) setting.showFurigana = true;
 				ymcContent.setting = setting;
 			}
 		});
@@ -176,6 +178,24 @@ var ymcContent = {
 		popupHeader.classList.add('yomichan-popup-header');
 		popup.appendChild(popupHeader);
 
+		// ふりがな表示切替ボタン
+		var yomichanFuriganaToggleButton = document.createElement('button');
+		yomichanFuriganaToggleButton.classList.add('yomichan-furigana-toggle-button');
+		// 表示状態に応じてラベルを設定（ON: あ, OFF: あ×）
+		function updateFuriganaToggleLabel() {
+			if (ymcContent.setting.showFurigana === false) {
+				yomichanFuriganaToggleButton.textContent = 'あ×';
+				yomichanFuriganaToggleButton.setAttribute('aria-label', 'ふりがなを表示しない');
+				yomichanFuriganaToggleButton.classList.add('yomichan-furigana-off');
+			} else {
+				yomichanFuriganaToggleButton.textContent = 'あ';
+				yomichanFuriganaToggleButton.setAttribute('aria-label', 'ふりがなを表示する');
+				yomichanFuriganaToggleButton.classList.remove('yomichan-furigana-off');
+			}
+		}
+		updateFuriganaToggleLabel();
+		popupHeader.appendChild(yomichanFuriganaToggleButton);
+
 		// 設定ボタン
 		var yomichanSettingButton = document.createElement('button');
 		yomichanSettingButton.classList.add('yomichan-setting-button');
@@ -220,10 +240,14 @@ var ymcContent = {
 		// ふりがな（rt）のスタイル設定
 		var furiganaColor = ymcContent.setting.furiganaColor || ymcContent.setting.wordColor;
 		var furiganaFontSize = ymcContent.setting.furiganaFontSize || (kanjiFontSize - ymcContent.noteFontSizeDiff);
-		document.querySelectorAll('.yomichan-content>ruby>rt').forEach(function(word) {
-			word.style.color = furiganaColor;
-			word.style.fontSize = furiganaFontSize + "px";
-		});
+		function applyFuriganaVisible(visible) {
+			document.querySelectorAll('.yomichan-content>ruby>rt').forEach(function(word) {
+				word.style.color = furiganaColor;
+				word.style.fontSize = furiganaFontSize + "px";
+				word.style.display = visible ? '' : 'none';
+			});
+		}
+		applyFuriganaVisible(ymcContent.setting.showFurigana !== false);
 
 		// 表示する幅を再計算
 		var _style = window.getComputedStyle(popup, null);
@@ -327,6 +351,21 @@ var ymcContent = {
 		yomichanCloseButton.addEventListener('click', function(event) {
 			event.stopPropagation();
 			ymcContent.closePopup();
+		}, false);
+
+		// ふりがな表示切替ボタンの押下イベント
+		yomichanFuriganaToggleButton.addEventListener('click', function(event) {
+			event.stopPropagation();
+			// トグル
+			var newValue = (ymcContent.setting.showFurigana === false);
+			ymcContent.setting.showFurigana = newValue;
+			updateFuriganaToggleLabel();
+			applyFuriganaVisible(newValue);
+			// Local Storageに保存
+			chrome.storage.local.set({
+				'yomichanSetting' : ymcContent.setting
+			}, function() {
+			});
 		}, false);
 
 		// ポップアップ内のクリックイベントを停止（外側クリック検出を防ぐため）
