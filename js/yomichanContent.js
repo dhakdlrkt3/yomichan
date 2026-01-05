@@ -552,6 +552,15 @@ var ymcContent = {
 			let selectionText = selection.toString();
 			if (selection.rangeCount && selectionText != "") {
 				let range = selection.getRangeAt(0);
+				// ポップアップ内の選択は無視する（ポップアップ内ドラッグ時に新しいポップアップを開かないようにする）
+				let popup = document.querySelector(".yomichan-popup");
+				if (popup) {
+					let container = range.commonAncestorContainer;
+					let elem = (container.nodeType === Node.TEXT_NODE ? container.parentNode : container);
+					if (popup.contains(elem)) {
+						return null;
+					}
+				}
 				let selectionRect = range.getBoundingClientRect();
 				let maxWidth = document.body.clientWidth;
 				let parentEl = range.commonAncestorContainer;
