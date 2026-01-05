@@ -11,9 +11,13 @@ var ymcContent = {
 	setting: {
 		backgroundColor: "#1C1C1C",
 		textColor: "#4CEE4C",
-		wordColor: "#FFFFFF",
+		wordColor: "#FFFFFF", // 後方互換性のため保持
 		textFontSize: 12,
-		wordFontSize: 14,
+		wordFontSize: 14, // 後方互換性のため保持
+		kanjiColor: "#FFFFFF",
+		kanjiFontSize: 14,
+		furiganaColor: "#FFFFFF",
+		furiganaFontSize: 10,
 	},
 	// 有効にする
 	enable : function() {
@@ -37,6 +41,24 @@ var ymcContent = {
 				}, function() {
 				});
 			} else {
+				// 既存設定との互換性：wordColor/wordFontSizeがあればkanjiColor/kanjiFontSizeに移行
+				if (setting.wordColor && !setting.kanjiColor) {
+					setting.kanjiColor = setting.wordColor;
+				}
+				if (setting.wordFontSize && !setting.kanjiFontSize) {
+					setting.kanjiFontSize = setting.wordFontSize;
+				}
+				if (setting.wordColor && !setting.furiganaColor) {
+					setting.furiganaColor = setting.wordColor;
+				}
+				if (setting.wordFontSize && !setting.furiganaFontSize) {
+					setting.furiganaFontSize = Math.max(ymcContent.minFontSize, setting.wordFontSize - ymcContent.noteFontSizeDiff);
+				}
+				// デフォルト値の設定
+				if (!setting.kanjiColor) setting.kanjiColor = "#FFFFFF";
+				if (!setting.kanjiFontSize) setting.kanjiFontSize = 14;
+				if (!setting.furiganaColor) setting.furiganaColor = "#FFFFFF";
+				if (!setting.furiganaFontSize) setting.furiganaFontSize = 10;
 				ymcContent.setting = setting;
 			}
 		});
@@ -165,13 +187,24 @@ var ymcContent = {
 		document.body.appendChild(popup);
 
 		// rubyのstyleを設定
-		document.querySelectorAll('.yomichan-content>ruby').forEach(function(word) {
-			word.style.color = ymcContent.setting.wordColor;
-			word.style.fontSize = ymcContent.setting.wordFontSize + "px";
+		// 漢字（rb）のスタイル設定
+		var kanjiColor = ymcContent.setting.kanjiColor || ymcContent.setting.wordColor;
+		var kanjiFontSize = ymcContent.setting.kanjiFontSize || ymcContent.setting.wordFontSize;
+		document.querySelectorAll('.yomichan-content>ruby>rb').forEach(function(word) {
+			word.style.color = kanjiColor;
+			word.style.fontSize = kanjiFontSize + "px";
 		});
+		// rubyタグ全体にも漢字のスタイルを適用（後方互換性のため）
+		document.querySelectorAll('.yomichan-content>ruby').forEach(function(word) {
+			word.style.color = kanjiColor;
+			word.style.fontSize = kanjiFontSize + "px";
+		});
+		// ふりがな（rt）のスタイル設定
+		var furiganaColor = ymcContent.setting.furiganaColor || ymcContent.setting.wordColor;
+		var furiganaFontSize = ymcContent.setting.furiganaFontSize || (kanjiFontSize - ymcContent.noteFontSizeDiff);
 		document.querySelectorAll('.yomichan-content>ruby>rt').forEach(function(word) {
-			word.style.color = ymcContent.setting.wordColor;
-			word.style.fontSize = ymcContent.setting.wordFontSize - ymcContent.noteFontSizeDiff + "px";
+			word.style.color = furiganaColor;
+			word.style.fontSize = furiganaFontSize + "px";
 		});
 
 		// 表示する幅を再計算
@@ -304,30 +337,60 @@ var ymcContent = {
 
 			settingPopup.appendChild(bkgdDiv);
 
-			// 対象単語
-			var wordDiv = document.createElement('div');
+			// 漢字
+			var kanjiDiv = document.createElement('div');
 
-			var wordColorLabel = document.createElement('span');
-			wordColorLabel.textContent = "漢字・ふりがな：";
-			wordDiv.appendChild(wordColorLabel);
+			var kanjiColorLabel = document.createElement('span');
+			kanjiColorLabel.textContent = "漢字：";
+			kanjiDiv.appendChild(kanjiColorLabel);
 
-			var wordColorPicker = document.createElement('input');
-			wordColorPicker.type = 'color';
-			wordColorPicker.value = ymcContent.setting.wordColor;
-			wordColorPicker.classList.add('popup-setting');
-			wordColorPicker.id = 'word-color';
-			wordDiv.appendChild(wordColorPicker);
+			var kanjiColorPicker = document.createElement('input');
+			kanjiColorPicker.type = 'color';
+			kanjiColorPicker.value = ymcContent.setting.kanjiColor || ymcContent.setting.wordColor || "#FFFFFF";
+			kanjiColorPicker.classList.add('popup-setting');
+			kanjiColorPicker.id = 'kanji-color';
+			kanjiDiv.appendChild(kanjiColorPicker);
 
-			var wordFontSizeInput = document.createElement('input');
-			wordFontSizeInput.type = 'range';
-			wordFontSizeInput.value = ymcContent.setting.wordFontSize;
-			wordFontSizeInput.min = ymcContent.minFontSize;
-			wordFontSizeInput.max = ymcContent.maxFontSize;
-			wordFontSizeInput.classList.add('popup-setting');
-			wordFontSizeInput.id = 'word-font-size';
-			wordDiv.appendChild(wordFontSizeInput);
+			var kanjiFontSizeInput = document.createElement('input');
+			kanjiFontSizeInput.type = 'range';
+			kanjiFontSizeInput.value = ymcContent.setting.kanjiFontSize || ymcContent.setting.wordFontSize || 14;
+			kanjiFontSizeInput.min = ymcContent.minFontSize;
+			kanjiFontSizeInput.max = ymcContent.maxFontSize;
+			kanjiFontSizeInput.classList.add('popup-setting');
+			kanjiFontSizeInput.id = 'kanji-font-size';
+			kanjiDiv.appendChild(kanjiFontSizeInput);
 
-			settingPopup.appendChild(wordDiv);
+			settingPopup.appendChild(kanjiDiv);
+
+			// ふりがな
+			var furiganaDiv = document.createElement('div');
+
+			var furiganaColorLabel = document.createElement('span');
+			furiganaColorLabel.textContent = "ふりがな：";
+			furiganaDiv.appendChild(furiganaColorLabel);
+
+			var furiganaColorPicker = document.createElement('input');
+			furiganaColorPicker.type = 'color';
+			furiganaColorPicker.value = ymcContent.setting.furiganaColor || ymcContent.setting.wordColor || "#FFFFFF";
+			furiganaColorPicker.classList.add('popup-setting');
+			furiganaColorPicker.id = 'furigana-color';
+			furiganaDiv.appendChild(furiganaColorPicker);
+
+			var furiganaFontSizeInput = document.createElement('input');
+			furiganaFontSizeInput.type = 'range';
+			var defaultFuriganaSize = ymcContent.setting.furiganaFontSize;
+			if (!defaultFuriganaSize) {
+				var kanjiSize = ymcContent.setting.kanjiFontSize || ymcContent.setting.wordFontSize || 14;
+				defaultFuriganaSize = Math.max(ymcContent.minFontSize, kanjiSize - ymcContent.noteFontSizeDiff);
+			}
+			furiganaFontSizeInput.value = defaultFuriganaSize;
+			furiganaFontSizeInput.min = ymcContent.minFontSize;
+			furiganaFontSizeInput.max = ymcContent.maxFontSize;
+			furiganaFontSizeInput.classList.add('popup-setting');
+			furiganaFontSizeInput.id = 'furigana-font-size';
+			furiganaDiv.appendChild(furiganaFontSizeInput);
+
+			settingPopup.appendChild(furiganaDiv);
 			
 			// 漢字以外のテキスト
 			var textDiv = document.createElement('div');
@@ -376,14 +439,22 @@ var ymcContent = {
 						document.querySelector('.yomichan-content').style.color = value;
 						ymcContent.setting.textColor = value;
 						break;
-					case "word-color":
-						// 対象単語の色
-						document.querySelectorAll(
-							'.yomichan-content>ruby, .yomichan-content>ruby>rt'
-						).forEach(function(word) {
+					case "kanji-color":
+						// 漢字の色
+						document.querySelectorAll('.yomichan-content>ruby>rb').forEach(function(word) {
 							word.style.color = value;
 						});
-						ymcContent.setting.wordColor = value;
+						document.querySelectorAll('.yomichan-content>ruby').forEach(function(word) {
+							word.style.color = value;
+						});
+						ymcContent.setting.kanjiColor = value;
+						break;
+					case "furigana-color":
+						// ふりがなの色
+						document.querySelectorAll('.yomichan-content>ruby>rt').forEach(function(word) {
+							word.style.color = value;
+						});
+						ymcContent.setting.furiganaColor = value;
 						break;
 					case "text-font-size":
 						// 漢字以外のテキストのフォントサイズ
@@ -391,16 +462,24 @@ var ymcContent = {
 						resetPopupStyle();
 						ymcContent.setting.textFontSize = value;
 						break;
-					case "word-font-size":
-						// 対象単語のフォントサイズ
+					case "kanji-font-size":
+						// 漢字のフォントサイズ
+						document.querySelectorAll('.yomichan-content>ruby>rb').forEach(function(word) {
+							word.style.fontSize = value + "px";
+						});
 						document.querySelectorAll('.yomichan-content>ruby').forEach(function(word) {
 							word.style.fontSize = value + "px";
 						});
+						resetPopupStyle();
+						ymcContent.setting.kanjiFontSize = value;
+						break;
+					case "furigana-font-size":
+						// ふりがなのフォントサイズ
 						document.querySelectorAll('.yomichan-content>ruby>rt').forEach(function(word) {
-							word.style.fontSize = value - ymcContent.noteFontSizeDiff + "px";
+							word.style.fontSize = value + "px";
 						});
 						resetPopupStyle();
-						ymcContent.setting.wordFontSize = value;
+						ymcContent.setting.furiganaFontSize = value;
 						break;
 					}
 					// Local Storageに保存
