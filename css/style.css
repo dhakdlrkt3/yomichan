@@ -158,6 +158,23 @@
 	word-break: break-word;
 }
 
+.yomichan-popup>.yomichan-word-analysis-result>.yomichan-word-item>.yomichan-word-japanese-link {
+	flex-shrink: 0;
+	color: #2196F3;
+	text-decoration: none;
+	font-size: 12px;
+	padding: 2px 8px;
+	border: 1px solid #2196F3;
+	border-radius: 3px;
+	background-color: rgba(33, 150, 243, 0.1);
+	transition: background-color 0.2s;
+	margin-right: 6px;
+}
+
+.yomichan-popup>.yomichan-word-analysis-result>.yomichan-word-item>.yomichan-word-japanese-link:hover {
+	background-color: rgba(33, 150, 243, 0.3);
+}
+
 .yomichan-popup>.yomichan-word-analysis-result>.yomichan-word-item>.yomichan-word-hanja-link {
 	flex-shrink: 0;
 	color: #4CAF50;

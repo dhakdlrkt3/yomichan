@@ -506,6 +506,8 @@ var ymcContent = {
 						furiganaHtml = word;
 					}
 					
+					// 네이버 일본어사전 URL 생성 (UTF-8 인코딩)
+					var naverJapaneseUrl = "https://ja.dict.naver.com/#/search?query=" + encodeURIComponent(word) + "&range=all";
 					// 네이버 한자사전 URL 생성 (UTF-8 인코딩)
 					var naverHanjaUrl = "https://hanja.dict.naver.com/#/search?query=" + encodeURIComponent(word);
 					
@@ -513,7 +515,8 @@ var ymcContent = {
 					html += '<div class="yomichan-word-item">';
 					html += '<span class="yomichan-word-furigana" style="color: ' + kanjiColor + '; font-size: ' + kanjiFontSize + 'px;">' + furiganaHtml + '</span>';
 					html += '<span class="yomichan-word-translation">' + (translation || '') + '</span>';
-					html += '<a href="' + naverHanjaUrl + '" target="_blank" class="yomichan-word-hanja-link" title="네이버 한자사전에서 검색">한자</a>';
+					html += '<a href="' + naverJapaneseUrl + '" target="_blank" class="yomichan-word-japanese-link" title="네이버 일본어사전에서 검색">일본어 한자</a>';
+					html += '<a href="' + naverHanjaUrl + '" target="_blank" class="yomichan-word-hanja-link" title="네이버 한자사전에서 검색">한국 한자</a>';
 					html += '</div>';
 				});
 				
