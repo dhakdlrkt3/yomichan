@@ -63,9 +63,9 @@
 	min-width: 24px;
 	height: 20px;
 	border-radius: 3px;
-	border: 1px solid #666;
+	border: 1px solid #bbb;
 	background-color: transparent;
-	color: #666;
+	color: #bbb;
 	font-size: 12px;
 	line-height: 18px;
 	padding: 0 4px;
@@ -74,7 +74,7 @@
 }
 
 .yomichan-popup-header>.yomichan-furigana-toggle-button.yomichan-furigana-off {
-	opacity: 0.5;
+	opacity: 0.7;
 }
 
 .yomichan-popup-header>.yomichan-close-button {
