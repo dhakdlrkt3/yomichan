@@ -339,19 +339,37 @@ var ymcContent = {
 			popup.style.height = expand ? 'auto' : '0px';
 			popup.style.width = expand ? _clientW + 'px' : '0px';
 
-			let settingButton = document.querySelector('.yomichan-setting-button');
-			settingButton.style.display = expand ? 'block' : 'none';
+			// 팝업 내용 요소들의 표시/숨김 처리
+			let popupHeader = popup.querySelector('.yomichan-popup-header');
+			let contentArea = popup.querySelector('.yomichan-content');
+			let buttonArea = popup.querySelector('.yomichan-button-area');
+			let translationResult = popup.querySelector('.yomichan-translation-result');
+			let wordAnalysisResult = popup.querySelector('.yomichan-word-analysis-result');
+
+			if (expand) {
+				// 팝업 확장 시 모든 요소 표시
+				if (popupHeader) popupHeader.style.display = 'flex';
+				if (contentArea) contentArea.style.display = 'block';
+				if (buttonArea) buttonArea.style.display = 'flex';
+				if (translationResult) translationResult.style.display = 'block';
+				if (wordAnalysisResult) wordAnalysisResult.style.display = 'block';
+
+				popup.classList.remove('yomichan-popup-hidden');
+			} else {
+				// 팝업 축소 시 모든 요소 숨김 (토글 버튼 제외)
+				if (popupHeader) popupHeader.style.display = 'none';
+				if (contentArea) contentArea.style.display = 'none';
+				if (buttonArea) buttonArea.style.display = 'none';
+				if (translationResult) translationResult.style.display = 'none';
+				if (wordAnalysisResult) wordAnalysisResult.style.display = 'none';
+
+				popup.classList.add('yomichan-popup-hidden');
+			}
 
 			let settingPopup = document.querySelector('.yomichan-setting-popup');
 			if (!expand && settingPopup) {
 				settingPopup.remove();
 				ymcContent.settingExpand = false;
-			}
-
-			if (expand) {
-				popup.classList.remove('yomichan-popup-hidden');
-			} else {
-				popup.classList.add('yomichan-popup-hidden');
 			}
 		}
 
