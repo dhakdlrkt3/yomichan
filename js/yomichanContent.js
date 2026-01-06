@@ -286,8 +286,13 @@ var ymcContent = {
 		// 表示する内容の幅を取得し、ポップアップに設定する
 		var range = document.createRange();
 		range.selectNodeContents(yomichanContent);
+		let contentWidth = range.getBoundingClientRect().width;
+
+		// 버튼 영역의 최소 너비를 고려 (문장 번역 + 단어 분석 버튼)
+		let buttonAreaMinWidth = 200; // 버튼 2개 + gap을 고려한 최소 너비
+
 		let width = Math.ceil(Math.min(maxWidth,
-				range.getBoundingClientRect().width));
+				Math.max(contentWidth, buttonAreaMinWidth)));
 		popup.style.width = Math.ceil(width) + "px";
 		window.getSelection().removeRange(range);
 
