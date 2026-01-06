@@ -153,29 +153,38 @@
 }
 
 .yomichan-popup>.yomichan-word-analysis-result>.yomichan-word-item {
-	display: flex;
-	align-items: flex-start; /* 버튼들이 위쪽에 정렬되도록 변경 */
-	gap: 8px; /* 간격을 조금 줄임 */
-	margin-bottom: 6px;
-	padding: 4px 0;
-	line-height: 1.6;
-	flex-wrap: wrap; /* 공간이 부족하면 줄바꿈 허용 */
+	display: grid;
+	grid-template-columns: 120px 1fr auto; /* 한자 영역, 번역 영역, 버튼 영역 */
+	gap: 12px;
+	margin-bottom: 8px;
+	padding: 8px;
+	border: 1px solid rgba(255, 255, 255, 0.1); /* 영역 구분을 위한 테두리 */
+	border-radius: 4px;
+	background-color: rgba(255, 255, 255, 0.02); /* 살짝 다른 배경색 */
+	line-height: 1.5;
+	align-items: start; /* 위쪽 정렬 */
 }
 
 .yomichan-popup>.yomichan-word-analysis-result>.yomichan-word-item>.yomichan-word-furigana {
-	flex-shrink: 0;
-	min-width: 80px;
+	grid-column: 1; /* 첫 번째 열 */
+	min-width: 120px;
+	padding: 4px;
+	word-break: break-word;
+	align-self: start;
 }
 
 .yomichan-popup>.yomichan-word-analysis-result>.yomichan-word-item>.yomichan-word-translation {
-	flex: 1;
+	grid-column: 2; /* 두 번째 열 */
 	color: #f0f0f0;
 	word-break: break-word;
-	min-width: 100px; /* 최소 너비 설정으로 공간 확보 */
+	padding: 4px;
+	min-height: 20px; /* 최소 높이로 정렬 유지 */
+	align-self: start;
 }
 
 .yomichan-popup>.yomichan-word-analysis-result>.yomichan-word-item>.yomichan-word-japanese-link {
-	flex-shrink: 1; /* 공간 부족 시 축소 허용 */
+	grid-column: 3; /* 세 번째 열 */
+	grid-row: 1; /* 첫 번째 행 */
 	color: #2196F3;
 	text-decoration: none;
 	font-size: 12px;
@@ -184,9 +193,10 @@
 	border-radius: 5px;
 	background-color: rgba(33, 150, 243, 0.1);
 	transition: background-color 0.2s;
-	margin-right: 6px;
-	min-width: 0; /* 텍스트가 줄어들 수 있도록 함 */
+	margin-bottom: 4px;
 	white-space: nowrap;
+	align-self: start;
+	justify-self: start;
 }
 
 .yomichan-popup>.yomichan-word-analysis-result>.yomichan-word-item>.yomichan-word-japanese-link:hover {
@@ -194,7 +204,8 @@
 }
 
 .yomichan-popup>.yomichan-word-analysis-result>.yomichan-word-item>.yomichan-word-hanja-link {
-	flex-shrink: 1; /* 공간 부족 시 축소 허용 */
+	grid-column: 3; /* 세 번째 열 */
+	grid-row: 2; /* 두 번째 행 (일본어 버튼 아래) */
 	color: #4CAF50;
 	text-decoration: none;
 	font-size: 12px;
@@ -203,8 +214,9 @@
 	border-radius: 5px;
 	background-color: rgba(76, 175, 80, 0.1);
 	transition: background-color 0.2s;
-	min-width: 0; /* 텍스트가 줄어들 수 있도록 함 */
 	white-space: nowrap;
+	align-self: start;
+	justify-self: start;
 }
 
 .yomichan-popup>.yomichan-word-analysis-result>.yomichan-word-item>.yomichan-word-hanja-link:hover {
