@@ -46,7 +46,7 @@
 	max-width: 20px;
 	height: 20px;
 	background-image:
-		url("chrome-extension://__MSG_@@extension_id__/img/settingButton.png");
+		url("chrome-extension://__MSG_@@extension_id__/img/Setting.svg");
 	background-repeat: repeat;
 	background-color: transparent;
 	background-size: 100% 100%;
@@ -60,34 +60,48 @@
 
 .yomichan-popup-header>.yomichan-furigana-toggle-button {
 	cursor: pointer;
-	min-width: 24px;
+	width: 20px;
+	min-width: 20px;
+	max-width: 20px;
 	height: 20px;
 	border-radius: 5px;
 	border: 1px solid #bbb;
 	background-color: transparent;
-	color: #bbb;
-	font-size: 12px;
-	line-height: 18px;
-	padding: 0 4px;
+	background-image: url("chrome-extension://__MSG_@@extension_id__/img/View.svg");
+	background-repeat: no-repeat;
+	background-size: 100% 100%;
+	background-position: center;
+	font-size: 0;
+	line-height: 0;
+	padding: 0;
 	box-sizing: border-box;
 	flex-shrink: 0;
 }
 
 .yomichan-popup-header>.yomichan-furigana-toggle-button.yomichan-furigana-off {
+	background-image: url("chrome-extension://__MSG_@@extension_id__/img/View_hide.svg");
 	opacity: 0.7;
 }
 
 .yomichan-popup-header>.yomichan-close-button {
 	cursor: pointer;
+	width: 20px;
+	min-width: 20px;
+	max-width: 20px;
+	height: 20px;
 	padding: 0;
 	line-height: 0px;
-	font-size: 30px;
+	font-size: 0px;
 	text-align: center;
 	color: #666;
 	font-weight: bold;
 	display: flex;
 	align-items: center;
 	justify-content: center;
+	background-image: url("chrome-extension://__MSG_@@extension_id__/img/Dell.svg");
+	background-repeat: no-repeat;
+	background-size: 100% 100%;
+	background-position: center;
 	transition: background-color 0.2s;
 }
 
@@ -203,9 +217,9 @@
 	max-width: 20px;
 	height: 20px;
 	background-image:
-		url("chrome-extension://__MSG_@@extension_id__/img/shrinkButton.png");
+		url("chrome-extension://__MSG_@@extension_id__/img/Reduce.svg");
 	background-repeat: repeat;
-	background-color: transparent;
+	background-color: rgb(0, 0, 0);
 	background-size: 100% 100%;
 	border: 0;
 	outline: none;

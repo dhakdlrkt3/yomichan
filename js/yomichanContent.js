@@ -184,14 +184,12 @@ var ymcContent = {
 		// ふりがな表示切替ボタン
 		var yomichanFuriganaToggleButton = document.createElement('button');
 		yomichanFuriganaToggleButton.classList.add('yomichan-furigana-toggle-button');
-		// 表示状態に応じてラベルを設定（ON: あ, OFF: あ×）
+		// 表示状態に応じてラベルを設定（ON: View.svg, OFF: View_hide.svg）
 		function updateFuriganaToggleLabel() {
 			if (ymcContent.setting.showFurigana === false) {
-				yomichanFuriganaToggleButton.textContent = 'あ×';
 				yomichanFuriganaToggleButton.setAttribute('aria-label', 'ふりがなを表示しない');
 				yomichanFuriganaToggleButton.classList.add('yomichan-furigana-off');
 			} else {
-				yomichanFuriganaToggleButton.textContent = 'あ';
 				yomichanFuriganaToggleButton.setAttribute('aria-label', 'ふりがなを表示する');
 				yomichanFuriganaToggleButton.classList.remove('yomichan-furigana-off');
 			}
@@ -207,7 +205,6 @@ var ymcContent = {
 		// 閉じるボタン
 		var yomichanCloseButton = document.createElement('button');
 		yomichanCloseButton.classList.add('yomichan-close-button');
-		yomichanCloseButton.textContent = '×';
 		yomichanCloseButton.setAttribute('aria-label', '閉じる');
 		popupHeader.appendChild(yomichanCloseButton);
 
