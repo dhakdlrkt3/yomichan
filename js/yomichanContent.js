@@ -523,7 +523,7 @@ var ymcContent = {
 				});
 				
 				wordAnalysisResult.innerHTML = html;
-				
+
 				// 후리가나 스타일 적용
 				var furiganaColor = ymcContent.setting.furiganaColor || ymcContent.setting.wordColor || "#FFFFFF";
 				var furiganaFontSize = ymcContent.setting.furiganaFontSize || Math.max(ymcContent.minFontSize, kanjiFontSize - ymcContent.noteFontSizeDiff);
@@ -532,6 +532,26 @@ var ymcContent = {
 					rt.style.fontSize = furiganaFontSize + "px";
 					rt.style.display = ymcContent.setting.showFurigana !== false ? '' : 'none';
 				});
+
+				// 단어 분석 결과 표시 시 팝업 너비 재조정 (더 넓은 공간 확보)
+				var _style = window.getComputedStyle(popup, null);
+				let horizontalPadding = parseFloat(_style.paddingLeft) + parseFloat(_style.paddingRight);
+				let maxWidth = Math.max(selection.maxWidth, selection.width) - horizontalPadding;
+
+				// 단어 분석 결과가 있을 때는 최소 너비를 350px로 설정
+				let minWidthForWordAnalysis = 350;
+				let contentWidth = Math.max(
+					yomichanContent.clientWidth,
+					wordAnalysisResult.scrollWidth + horizontalPadding
+				);
+				let newWidth = Math.ceil(Math.min(maxWidth, Math.max(contentWidth, minWidthForWordAnalysis)));
+				popup.style.width = newWidth + "px";
+
+				// 팝업 위치 재조정
+				let right = document.documentElement.clientWidth - (selection.right + document.documentElement.scrollLeft);
+				right = Math.min(right, document.documentElement.clientWidth - newWidth - horizontalPadding);
+				right = Math.max(right, yomichanPopupToggleButton.clientWidth);
+				popup.style.right = right + "px";
 			});
 		}, false);
 

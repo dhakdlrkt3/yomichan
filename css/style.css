@@ -154,11 +154,12 @@
 
 .yomichan-popup>.yomichan-word-analysis-result>.yomichan-word-item {
 	display: flex;
-	align-items: center;
-	gap: 12px;
+	align-items: flex-start; /* 버튼들이 위쪽에 정렬되도록 변경 */
+	gap: 8px; /* 간격을 조금 줄임 */
 	margin-bottom: 6px;
 	padding: 4px 0;
 	line-height: 1.6;
+	flex-wrap: wrap; /* 공간이 부족하면 줄바꿈 허용 */
 }
 
 .yomichan-popup>.yomichan-word-analysis-result>.yomichan-word-item>.yomichan-word-furigana {
@@ -170,10 +171,11 @@
 	flex: 1;
 	color: #f0f0f0;
 	word-break: break-word;
+	min-width: 100px; /* 최소 너비 설정으로 공간 확보 */
 }
 
 .yomichan-popup>.yomichan-word-analysis-result>.yomichan-word-item>.yomichan-word-japanese-link {
-	flex-shrink: 0;
+	flex-shrink: 1; /* 공간 부족 시 축소 허용 */
 	color: #2196F3;
 	text-decoration: none;
 	font-size: 12px;
@@ -183,6 +185,8 @@
 	background-color: rgba(33, 150, 243, 0.1);
 	transition: background-color 0.2s;
 	margin-right: 6px;
+	min-width: 0; /* 텍스트가 줄어들 수 있도록 함 */
+	white-space: nowrap;
 }
 
 .yomichan-popup>.yomichan-word-analysis-result>.yomichan-word-item>.yomichan-word-japanese-link:hover {
@@ -190,7 +194,7 @@
 }
 
 .yomichan-popup>.yomichan-word-analysis-result>.yomichan-word-item>.yomichan-word-hanja-link {
-	flex-shrink: 0;
+	flex-shrink: 1; /* 공간 부족 시 축소 허용 */
 	color: #4CAF50;
 	text-decoration: none;
 	font-size: 12px;
@@ -199,6 +203,8 @@
 	border-radius: 5px;
 	background-color: rgba(76, 175, 80, 0.1);
 	transition: background-color 0.2s;
+	min-width: 0; /* 텍스트가 줄어들 수 있도록 함 */
+	white-space: nowrap;
 }
 
 .yomichan-popup>.yomichan-word-analysis-result>.yomichan-word-item>.yomichan-word-hanja-link:hover {
